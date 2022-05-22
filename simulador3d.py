@@ -1,22 +1,22 @@
-#%matplotlib inline
-from typing import final
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 import pygame
 import numpy as np
 from math import *
 
-# WHITE = (255, 255, 255)
-# RED = (0, 0, 0)
-# BLACK = (0, 255, 0)
+WHITE = (255, 255, 255)
+RED = (0, 0, 0)
+BLACK = (0, 255, 0)
 
-# WIDTH, HEIGHT = 800, 600
-# pygame.display.set_caption("3D projection in pygame!")
-# screen = pygame.display.set_mode((WIDTH, HEIGHT))
+WIDTH, HEIGHT = 800, 600
+pygame.display.set_caption("3D projection in pygame!")
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
-# scale = 100
+scale = 100
 
-# circle_pos = [WIDTH/2, HEIGHT/2]  # x, y
+circle_pos = [WIDTH/2, HEIGHT/2]  # x, y
 
-# angle = 0
+angle = 0
 
 cubeMatrix = np.matrix([[1,7, 7, 1, 4], [1, 1, 1, 1, 7], [1, 1, 7, 7, 4], [1, 1, 1, 1, 1]])
 points = [["3", "2", "1"], ["1", "2", "1"], ["2", "1", "3"]]
@@ -77,80 +77,109 @@ displayVertex.append(np.matrix(finalMatrix[1].getA1()))
 displayVertex.append(np.matrix(finalMatrix[2].getA1()))
 displayVertex.append(np.matrix(finalMatrix[3].getA1()))
 
+
+
+# fig = plt.figure()
+
+# ax = fig.add_subplot(111, projection='3d')
+
+# x = [1,7, 7, 1, 4]
+
+# y = [1, 1, 1, 1, 7]
+
+# z = [1, 1, 7, 7, 4]
+
+# vertices = [list(zip(x,y,z))]
+
+# poly = Poly3DCollection(vertices, alpha=0.6)
+
+# ax.add_collection3d(poly)
+
+# ax.plot_trisurf(x, y, z,
+#                 cmap='viridis', edgecolor='none');
+# # ax.set_xlim(0,5)
+
+# # ax.set_ylim(0,5)
+
+# # ax.set_zlim(0,5) 
+
+# plt.show()
+
+
 # print(points)
 
-# projection_matrix = np.matrix([
-#     [1, 0, 0],
-#     [0, 1, 0]
-# ])
+projection_matrix = np.matrix([
+    [1, 0, 0],
+    [0, 1, 0]
+])
 
 
-# projected_points = [
-#     [n, n] for n in range(len(points))
-# ]
+projected_points = [
+    [n, n] for n in range(len(displayVertex))
+]
 
 
-# def connect_points(i, j, points):
-#     pygame.draw.line(
-#         screen, BLACK, (points[i][0], points[i][1]), (points[j][0], points[j][1]))
+def connect_points(i, j, points):
+    pygame.draw.line(
+        screen, BLACK, (points[i][0], points[i][1]), (points[j][0], points[j][1]))
 
 
-# clock = pygame.time.Clock()
-# while True:
+clock = pygame.time.Clock()
+while True:
 
-#     clock.tick(60)
+    clock.tick(60)
 
-#     for event in pygame.event.get():
-#         if event.type == pygame.QUIT:
-#             pygame.quit()
-#             exit()
-#         if event.type == pygame.KEYDOWN:
-#             if event.key == pygame.K_ESCAPE:
-#                 pygame.quit()
-#                 exit()
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            exit()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                pygame.quit()
+                exit()
 
-#     # update stuff
+    # update stuff
 
-#     rotation_z = np.matrix([
-#         [cos(angle), -sin(angle), 0],
-#         [sin(angle), cos(angle), 0],
-#         [0, 0, 1],
-#     ])
+    # rotation_z = np.matrix([
+    #     [cos(angle), -sin(angle), 0],
+    #     [sin(angle), cos(angle), 0],
+    #     [0, 0, 1],
+    # ])
 
-#     rotation_y = np.matrix([
-#         [cos(angle), 0, sin(angle)],
-#         [0, 1, 0],
-#         [-sin(angle), 0, cos(angle)],
-#     ])
+    # rotation_y = np.matrix([
+    #     [cos(angle), 0, sin(angle)],
+    #     [0, 1, 0],
+    #     [-sin(angle), 0, cos(angle)],
+    # ])
 
-#     rotation_x = np.matrix([
-#         [1, 0, 0],
-#         [0, cos(angle), -sin(angle)],
-#         [0, sin(angle), cos(angle)],
-#     ])
-#     angle += 0.01
+    # rotation_x = np.matrix([
+    #     [1, 0, 0],
+    #     [0, cos(angle), -sin(angle)],
+    #     [0, sin(angle), cos(angle)],
+    # ])
+    # angle += 0.01
 
-#     screen.fill(WHITE)
+    screen.fill(WHITE)
 #     # drawining stuff
 
-#     i = 0
-#     for point in points:
-#         rotated2d = np.dot(rotation_z, point.reshape((3, 1)))
-#         rotated2d = np.dot(rotation_y, rotated2d)
-#         rotated2d = np.dot(rotation_x, rotated2d)
+    i = 0
+    for point in displayVertex:
+        # rotated2d = np.dot(rotation_z, point.reshape((3, 1)))
+        # rotated2d = np.dot(rotation_y, rotated2d)
+        # rotated2d = np.dot(rotation_x, rotated2d)
 
-#         projected2d = np.dot(projection_matrix, rotated2d)
+        projected2d = np.dot(projection_matrix)
 
-#         x = int(projected2d[0][0] * scale) + circle_pos[0]
-#         y = int(projected2d[1][0] * scale) + circle_pos[1]
+        x = int(projected2d[0][0] * scale) + circle_pos[0]
+        y = int(projected2d[1][0] * scale) + circle_pos[1]
 
-#         projected_points[i] = [x, y]
-#         pygame.draw.circle(screen, RED, (x, y), 5)
-#         i += 1
+        projected_points[i] = [x, y]
+        pygame.draw.circle(screen, RED, (x, y), 5)
+        i += 1
 
-#     for p in range(4):
-#         connect_points(p, (p+1) % 4, projected_points)
-#         connect_points(p+4, ((p+1) % 4) + 4, projected_points)
-#         connect_points(p, (p+4), projected_points)
+    for p in range(4):
+        connect_points(p, (p+1) % 4, projected_points)
+        connect_points(p+4, ((p+1) % 4) + 4, projected_points)
+        connect_points(p, (p+4), projected_points)
 
-#     pygame.display.update()
+    pygame.display.update()
