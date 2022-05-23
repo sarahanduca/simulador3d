@@ -1,24 +1,28 @@
 import matplotlib.pyplot as plt
-from scipy.spatial import ConvexHull
 import numpy as np
 from math import *
 
 cubeMatrix = np.matrix([[1,7, 7, 1, 4], [1, 1, 1, 1, 7], [1, 1, 7, 7, 4], [1, 1, 1, 1, 1]])
 points = [["0", "1", "0"], ["1", "0", "0"], ["0", "0", "0"]]
-pov = ["20", "10", "30"]
-# pov = input("Primeiro ponto de vista: ").split(",")
-# for i in range(3):
-#     points.append(input("Digite um ponto do plano: ").split(","))
+pov = ["40", "10", "80"]
+pov = input("Primeiro ponto de vista: ").split(",")
 
-
-# def calcN(points):
-#     p1 = points[0]
-#     p2 =  points[1]
-#     p3 = points[2]
-#     nx = (int(p1[1]) * int(p2[1])) *  (int(p3[2]) * int(p2[2])) - ((int(p3[1]) * int(p2[1])) * (int(p1[2]) * int(p2[2])))
-#     ny = -1 * (int(p1[0]) * int(p2[0])) *  (int(p3[2]) * int(p2[2])) - ((int(p3[0]) * int(p2[0])) * (int(p1[2]) * int(p2[2])))
-#     nz = (int(p1[0]) * int(p2[0])) *  (int(p3[1]) * int(p2[1])) - ((int(p3[0]) * int(p2[0])) * (int(p1[1]) * int(p2[1])))
-#     return nx, ny, nz
+#Função que calcula o vetor normal ao plano de projeção
+#Usamos a fórmula que está na especificação do trabalho:
+#𝑛x = 𝑦1𝑦2 . 𝑧3𝑧2 − 𝑦3. 𝑦2 . 𝑧1𝑧2
+#𝑛y = −(𝑥1𝑥2 . 𝑧3𝑧2 − 𝑥3𝑥2 . 𝑧1. 𝑧2)
+#𝑛z = 𝑥1𝑥3. 𝑦3𝑦2 − 𝑥3𝑥2 . 𝑦1. 𝑦2
+#Contudo, está fórmula não funcionou para planos são definidos por
+#pontos que possuem coordenadas na origem. Tendo isto em vista, deixamos
+#o plano de projeção definido como z = 0;
+def calcN(points):
+    p1 = points[0]
+    p2 =  points[1]
+    p3 = points[2]
+    nx = (int(p1[1]) * int(p2[1])) *  (int(p3[2]) * int(p2[2])) - ((int(p3[1]) * int(p2[1])) * (int(p1[2]) * int(p2[2])))
+    ny = -1 * (int(p1[0]) * int(p2[0])) *  (int(p3[2]) * int(p2[2])) - ((int(p3[0]) * int(p2[0])) * (int(p1[2]) * int(p2[2])))
+    nz = (int(p1[0]) * int(p2[0])) *  (int(p3[1]) * int(p2[1])) - ((int(p3[0]) * int(p2[0])) * (int(p1[1]) * int(p2[1])))
+    return nx, ny, nz
 
 def calcD(pov, points):
     # nx, ny, nz = calcN(points)
@@ -56,17 +60,14 @@ def finalMatrix(objectMatrix):
 
 def main():
     print(finalMatrix)
-    fig = plt.figure()
-    ax = fig.add_subplot(1, 1, 1, projection='3d')
+    arestas = [[0,1],[2,1],[2,3],[3,0],[0,4],[1,4],[2,4],[3,4]]
+    for aresta in arestas:
+        x, y = finalMatrix[0].getA1(), finalMatrix[1].getA1()
+        plt.plot([x[aresta[0]], x[aresta[1]]], [y[aresta[0]], y[aresta[1]]], marker="o",color="blue")
+    
 
-    X, Y, Z = finalMatrix[0].getA1(), finalMatrix[1].getA1(), finalMatrix[2].getA1()
-
-    ax.plot(X, Y, Z, "ro")
-
-    hull = ConvexHull(np.array([X, Y, Z]).T)
-    for s in hull.simplices:
-        s = np.append(s, s[0])
-        ax.plot(X[s], Y[s], Z[s], "b-")
+    plt.plot(x, y, marker = "o", color = "blue")
+    plt.grid()
     plt.show()
 
 if __name__ == '__main__':
